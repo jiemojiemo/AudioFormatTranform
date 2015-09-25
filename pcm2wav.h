@@ -3,6 +3,10 @@
 
 #include <string>
 using std::string;
+
+//wave格式有比较复杂的几种情况
+//这里，我们使用最简单的情况，能够支持播放器播放
+//具体复杂情况可以参照 http://blog.csdn.net/yueyihua/article/details/5494905
 //----------------以下定义一些地址
 
 //RIFF,资源交换标志
@@ -56,11 +60,10 @@ private:
 	
 	void Pcm2Wav_File2File();
 	void Pcm2Wav_Buffer2File();
-	void ReadFile();
-	void BeginToWrite();
-	void InputAndOutputPrepared( const Pcm2WavParameter& para );
-	void OutputPrepared( const Pcm2WavParameter& para );
-	void InputPrepared( const Pcm2WavParameter& para );
+	void ReadFileToMemory();
+	void OpenOutputFile();
+	void CloseOutputFile() { fclose(m_pOutFile); }
+	void WriteToOutputFile();
 	unsigned long GetDataFileSize();
 	void WriteSomeDataToOutFile( const void* str, int size );
 
@@ -95,7 +98,7 @@ private:
 	string m_outFileName;
 public:
 	CPcm2Wav( const string& inFile, const string& outFile );
-	CPcm2Wav( float* buffer, int bufferSize, const string& outFileName );
+	CPcm2Wav( void* buffer, int bufferSize, const string& outFileName );
 	~CPcm2Wav();
 	/**
 	* @brief : 根据infomation进行封装 

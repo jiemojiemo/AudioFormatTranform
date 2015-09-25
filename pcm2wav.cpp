@@ -9,7 +9,7 @@ CPcm2Wav::CPcm2Wav(const string& inFile, const string& outFile):
 {
 }
 
-CPcm2Wav::CPcm2Wav( float* buffer, int bufferSize, const string& outFileName):
+CPcm2Wav::CPcm2Wav( void* buffer, int bufferSize, const string& outFileName):
 	m_outFileName(outFileName), m_pbuffer((void*)buffer),m_bufferSize(bufferSize),m_isFile2File(false)
 {
 
@@ -28,10 +28,14 @@ CPcm2Wav::~CPcm2Wav()
 
 int CPcm2Wav::Pcm2Wav(const Pcm2WavParameter& para)
 {
+	assert( para.channels == 1 || para.channels == 2 );
+	assert( para.formatTag > 0 );
+	assert( para.sampleBits==8 || para.sampleBits==16 || para.sampleBits==24 | para.sampleBits==32);
+	assert( para.sampleRate > 0 );
 	m_parameter = para;
 	if (m_isFile2File)
 	{
-		Pcm2Wav_File2File(  );
+		Pcm2Wav_File2File();
 	}
 	else
 	{
@@ -42,32 +46,18 @@ int CPcm2Wav::Pcm2Wav(const Pcm2WavParameter& para)
 void CPcm2Wav::Pcm2Wav_File2File()
 {
 	// ‘文件’-》‘内存’
-	ReadFile();
-	//打开输出文件
-	m_pOutFile = fopen(m_outFileName.c_str(), "wb");
-	if (m_pOutFile == NULL)
-	{
-		fprintf(stderr, "Eorror:Cannnot open the output file.\n");
-		exit(-1);
-	}
-	m_outFileIndex = 0;
-	BeginToWrite();
-	fclose(m_pOutFile);
+	ReadFileToMemory();
+	Pcm2Wav_Buffer2File();
 }
 void CPcm2Wav::Pcm2Wav_Buffer2File()
 {
 	//初始化输出的参数
 	m_outFileIndex = 0;
-	m_pOutFile = fopen(m_outFileName.c_str(), "wb");
-	if (m_pOutFile == NULL)
-	{
-		fprintf(stderr, "Eorror:Cannnot open the output file.\n");
-		exit(-1);
-	}
-	BeginToWrite();
-	fclose(m_pOutFile);
+	OpenOutputFile();
+	WriteToOutputFile();
+	CloseOutputFile();
 }
-void CPcm2Wav::ReadFile()
+void CPcm2Wav::ReadFileToMemory()
 {
 	m_pInFile = fopen(m_inFileName.c_str(), "rb");
 	if (m_pInFile == NULL)
@@ -83,24 +73,20 @@ void CPcm2Wav::ReadFile()
 	fread(m_pbuffer, 1, m_bufferSize, m_pInFile);
 	fclose(m_pInFile);
 }
-void CPcm2Wav::BeginToWrite()
+void CPcm2Wav::OpenOutputFile()
+{
+	m_pOutFile = fopen(m_outFileName.c_str(), "wb");
+	if (m_pOutFile == NULL)
+	{
+		fprintf(stderr, "Eorror:Cannnot open the output file.\n");
+		exit(-1);
+	}
+}
+void CPcm2Wav::WriteToOutputFile()
 {
 	WriteRIFFChunk();
 	WriteFMTChunk();
 	WriteDataChunk();
-}
-void CPcm2Wav::InputAndOutputPrepared( const Pcm2WavParameter& para )
-{
-	OutputPrepared( para );
-	InputPrepared( para );
-}
-void CPcm2Wav::OutputPrepared( const Pcm2WavParameter& para )
-{
-
-}
-void CPcm2Wav::InputPrepared( const Pcm2WavParameter& para )
-{
-
 }
 void CPcm2Wav::WriteSomeDataToOutFile( const void* str, int size )
 {

@@ -7,7 +7,7 @@
 int main()
 {
 	//Pcm2WavParameter info;
-	//CPcm2Wav pcm2wav( "2_32float_44100.raw", "2333.wav" );
+	//CPcm2Wav pcm2wav( "2_32float_44100.raw", "233445453.wav" );
 	//info.channels	= 2;
 	//info.formatTag	= 3;
 	//info.sampleRate = 44100;
@@ -17,21 +17,21 @@ int main()
 
 
 	unsigned long fileSize;
-	FILE* file = fopen( "2_32float_44100.raw", "rb" );
-	fseek( file, 0, SEEK_END );
-	fileSize = ftell( file );
-	fseek( file, 0, SEEK_SET );
-	float* buffer = (float*)malloc( fileSize );
-	fread( buffer, 1, fileSize, file );
+	FILE* file = fopen("2_32float_44100.raw", "rb");
+	fseek(file, 0, SEEK_END);
+	fileSize = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	float* buffer = (float*)malloc(fileSize);
+	fread(buffer, 1, fileSize, file);
 
 	Pcm2WavParameter info;
-	CPcm2Wav pcm2wav( buffer, fileSize, "2333333.wav" );
-	info.channels	= 2;
-	info.formatTag	= 3;
+	CPcm2Wav pcm2wav(buffer, fileSize, "2333333.wav");
+	info.channels = 2;
+	info.formatTag = 3;
 	info.sampleRate = 44100;
 	info.sampleBits = 32;
 	pcm2wav.Pcm2Wav(info);
-	free( buffer );
+	free(buffer);
 }
 
 
