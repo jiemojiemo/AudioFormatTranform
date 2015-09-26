@@ -14,6 +14,7 @@ using namespace std;
 int main()
 {
     TransformParameter params;
+    params.formatTag = WAVE_FORMAT_PCM;
     params.destFmt = WAVE;
     params.sourFmt = RAW;
     params.nChannels = 1;
@@ -21,8 +22,9 @@ int main()
     params.sampleBits = 16;
 
     auto audioTransformer = TransformFactory::GetTransformer(params);
-    string sourseFile = "/Users/zj-dt0095/Music/sourceFile.raw";
-    audioTransformer->doTransform( sourseFile );
+    string sourseFile = "/Users/zj-dt0095/Music/1_16_44100.raw";
+    string destFile = "/Users/zj-dt0095/Music/sourceFile.wav";
+    audioTransformer->doTransform( sourseFile, destFile );
     
     return 0;
 }

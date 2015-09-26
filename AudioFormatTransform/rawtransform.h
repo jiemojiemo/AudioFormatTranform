@@ -9,6 +9,7 @@
 #ifndef rawtransform_h
 #define rawtransform_h
 #include "audioformattransform.h"
+#include <memory>
 
 class RawTransformer : public AudioTransformer
 {
@@ -23,11 +24,12 @@ private:
 class RawTransformToWav : public RawTransformer
 {
 public:
+    RawTransformToWav(const TransformParameter& params);
     virtual void doTransform(const string& sourceFileName, const string& resultFileName);
     virtual void doTransform(const string& sourceFileNmae);
 private:
     class Impl;
-    Impl* m_Impl;
+    std::unique_ptr<Impl> m_Impl;
 };
 
 

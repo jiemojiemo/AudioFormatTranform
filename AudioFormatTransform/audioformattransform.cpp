@@ -19,7 +19,7 @@ AudioTransformer* TransformFactory::GetTransformer(const TransformParameter &par
         case RAW:
             switch (params.destFmt) {
                 case WAVE:
-                    return new RawTransformToWav;
+                    return new RawTransformToWav(params);
                     break;
                     
                 default:

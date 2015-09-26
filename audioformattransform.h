@@ -17,13 +17,26 @@ using std::string;
 ClassName(const ClassName&);                \
 ClassName& operator=(const ClassName&)
 
+//more information abot wave http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
 
 typedef unsigned long AUDIO_FORMAT;
-
 static const AUDIO_FORMAT RAW   =0x0001;
-static const AUDIO_FORMAT WAVE  =0x0002;
+static const AUDIO_FORMAT WAVE  =0x0003;
 
+typedef unsigned long FORMAT_CODE;
+static const FORMAT_CODE WAVE_FORMAT_PCM        = 0x0001;
+static const FORMAT_CODE WAVE_FORMAT_IEEE_FLOAT = 0x0003;
 
+struct TransformParameter{
+    AUDIO_FORMAT destFmt;
+    AUDIO_FORMAT sourFmt;
+    FORMAT_CODE  formatTag;
+    unsigned int nChannels;
+    unsigned int sampleRate;
+    unsigned int sampleBits;    //每个采样的bit数
+};
+
+//Interface about Audio Transform
 class AudioTransformer{
 public:
     //create a new file to storage the result
@@ -34,15 +47,7 @@ private:
     
 };
 
-
-struct TransformParameter{
-    AUDIO_FORMAT destFmt;
-    AUDIO_FORMAT sourFmt;
-    unsigned int nChannels;
-    unsigned int sampleRate;
-    unsigned int sampleBits;    //每个采样的bit数
-};
-
+//
 class TransformFactory{
 public:
     static AudioTransformer* GetTransformer(const TransformParameter& params);
@@ -51,9 +56,6 @@ private:
     TransformFactory(){}
     DISALLOW_COPY_AND_ASSIGN(TransformFactory);
 };
-
-
-
 
 
 #endif /* audioformattransform_h */
