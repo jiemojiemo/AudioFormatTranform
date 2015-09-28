@@ -17,7 +17,7 @@ using std::string;
 ClassName(const ClassName&);                \
 ClassName& operator=(const ClassName&)
 
-//more information abot wave http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
+//more information about wave http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
 
 typedef unsigned long AUDIO_FORMAT;
 static const AUDIO_FORMAT RAW   =0x0001;

@@ -64,8 +64,11 @@ public:
     TransformParameter m_params;
 };
 
-RawTransformToWav::Impl::Impl(const TransformParameter& params):m_params(params),
-m_bufferSize(0), m_fd(nullptr),m_outFdIndex(0)
+RawTransformToWav::Impl::Impl(const TransformParameter& params):
+    m_params(params),
+    m_bufferSize(0),
+    m_fd(nullptr),
+    m_outFdIndex(0)
 {
     
 }
@@ -262,16 +265,20 @@ void RawTransformToWav::doTransform(const string &sourceFileName, const string &
     ON_SCOPE_EXIT([&](){free(data);});
     
     //do transform
-    //..raw to wav do not need transform
+    //..raw to wav do not need transformation
     
     //write the result to the file
     m_Impl->WriteResultToFile(data,resultFileName);
 }
 
-void RawTransformToWav::doTransform(const string &sourceFileNmae)
+//if sourceFileName = xxx then there will create a xxx.wav file
+void RawTransformToWav::doTransform(const string &sourceFileName)
 {
-    assert(sourceFileNmae != "");
+    assert(sourceFileName != "");
     
+    string destFileName(sourceFileName+".wav");
+    
+    this->doTransform(sourceFileName, destFileName);
 }
 
 
