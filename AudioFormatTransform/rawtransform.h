@@ -16,6 +16,7 @@ class RawTransformer : public AudioTransformer
 public:
     virtual void doTransform(const string& sourceFileName, const string& resultFileName)=0;
     virtual void doTransform(const string& sourceFileNmae)=0;
+    virtual void doTransform(const void* data, unsigned long totalBytes,const string& resultFileName)=0;
 private:
     
 };
@@ -27,6 +28,7 @@ public:
     RawTransformToWav(const TransformParameter& params);
     virtual void doTransform(const string& sourceFileName, const string& resultFileName);
     virtual void doTransform(const string& sourceFileNmae);
+    virtual void doTransform(const void* data, unsigned long totalBytes,const string& resultFileName);
 private:
     class Impl;
     std::unique_ptr<Impl> m_Impl;

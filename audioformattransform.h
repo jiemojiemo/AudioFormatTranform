@@ -12,7 +12,6 @@
 #include <string>
 using std::string;
 
-
 #define    DISALLOW_COPY_AND_ASSIGN(ClassName) \
 ClassName(const ClassName&);                \
 ClassName& operator=(const ClassName&)
@@ -43,6 +42,8 @@ public:
     virtual void doTransform(const string& sourceFileName, const string& resultFileName)=0;
     //the result file will covers the source file
     virtual void doTransform(const string& sourceFileNmae)=0;
+    //
+    virtual void doTransform(const void* data, unsigned long totalBytes, const string& resultFileName)=0;
 private:
     
 };

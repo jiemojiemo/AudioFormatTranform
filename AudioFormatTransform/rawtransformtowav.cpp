@@ -19,8 +19,9 @@ class RawTransformToWav::Impl
 {
 public:
     //Read data from the file to the memory
-    //it will return a pointer which point the memory
-    void* GetDataFromSourceFile(const string& sourceFile);
+    void* GetData(const string& sourceFile);
+    //Read data from the buffer to the memory
+    void* GetData(const void* buffer, unsigned long totalBytes);
     
     //Open the file, the program will exit if it is failled
     FILE* OpenFile(const string& sourceFile, const string& mode);
@@ -73,7 +74,7 @@ RawTransformToWav::Impl::Impl(const TransformParameter& params):
     
 }
 
-void* RawTransformToWav::Impl::GetDataFromSourceFile(const string& sourceFile)
+void* RawTransformToWav::Impl::GetData(const string& sourceFile)
 {
     auto fd = OpenFile( sourceFile,"rb" );
     ON_SCOPE_EXIT([&](){CloseFile(fd);});
@@ -88,6 +89,14 @@ void* RawTransformToWav::Impl::GetDataFromSourceFile(const string& sourceFile)
     return nullptr;
 }
 
+void* RawTransformToWav::Impl::GetData(const void *buffer, unsigned long totalBytes)
+{
+    assert(totalBytes > 0);
+    auto data = MemoryAlloc(totalBytes);
+    m_bufferSize = totalBytes;
+    memcpy(data, buffer, totalBytes);
+    return data;
+}
 
 FILE* RawTransformToWav::Impl::OpenFile(const string& sourceFile, const string& mode)
 {
@@ -261,7 +270,7 @@ void RawTransformToWav::doTransform(const string &sourceFileName, const string &
     assert(resultFileName != "");
     
     //open the source file and get data
-    auto data = m_Impl->GetDataFromSourceFile(sourceFileName);
+    auto data = m_Impl->GetData(sourceFileName);
     ON_SCOPE_EXIT([&](){free(data);});
     
     //do transform
@@ -276,11 +285,23 @@ void RawTransformToWav::doTransform(const string &sourceFileName)
 {
     assert(sourceFileName != "");
     
-    string destFileName(sourceFileName+".wav");
+    string destFileName(sourceFileName);
     
     this->doTransform(sourceFileName, destFileName);
 }
 
+void RawTransformToWav::doTransform( const void* data, unsigned long totalBytes, const string& resultFileName )
+{
+    assert(resultFileName != "");
+    
+    auto buffer = m_Impl->GetData(data, totalBytes);
+    ON_SCOPE_EXIT([&](){free(buffer);});
+    
+    m_Impl->WriteResultToFile(buffer, resultFileName);
+    
+    
+    
+}
 
 
 
